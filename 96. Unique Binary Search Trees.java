@@ -1,4 +1,9 @@
 class Solution {
+    // This problem is based on catalan number calculation
+    // Concept: number of unique BSTs at give root = catesian product of  (number unique BSTs of left subtree) * (number unique BSTs of right subtree)
+    // C(n) = sum of number of unique BSTs at i for 1 in 1...n
+    // C(n) = C(0)C(n-1) + C(1)C(n-2)... + C(n)C(0) i.e. C(n) = C(i-1) * C(n-i) for i in 1... n;
+    
     //recursive approach
     
      public int numTrees(int n) {
