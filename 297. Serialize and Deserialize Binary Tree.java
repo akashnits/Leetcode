@@ -13,18 +13,22 @@ public class Codec {
 
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        return serializationHelper(root, "");
+         StringBuilder sb= new StringBuilder();
+         serializationHelper(root, sb);
+        return sb.toString();
     }
     
-    private String serializationHelper(TreeNode root, String s){
+    private void serializationHelper(TreeNode root, StringBuilder sb){
         // added comma to identify digits (serialzed 12 can be 12 or 1,2)
         // represented null with $ sign
         if(root == null){
-            return "$,";
+             sb.append("$").append(",");
+            return;
         }
         
-        return s + root.val + "," + serializationHelper(root.left, s) + serializationHelper(root.right, s);
-        
+        sb.append(root.val).append(",");
+        serializationHelper(root.left, sb);
+        serializationHelper(root.right, sb);
     }
 
     // Decodes your encoded data to tree.
