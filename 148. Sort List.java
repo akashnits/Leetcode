@@ -33,15 +33,11 @@ class Solution {
             if(left.val >= right.val){
                 //pick the element from right
                 tail.next = right;
-                ListNode prevRight = right;
                 right = right.next;
-                prevRight.next = null;
             }else{
                 //pick the element from left
                 tail.next = left;
-                ListNode prevLeft = left;
                 left = left.next;
-                prevLeft.next = null;
             }
             tail= tail.next;
         }
