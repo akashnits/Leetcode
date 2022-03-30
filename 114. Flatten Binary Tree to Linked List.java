@@ -1,18 +1,3 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
 class Solution {
     public void flatten(TreeNode root) {
         if(root == null)
@@ -25,19 +10,18 @@ class Solution {
             
             //detach right child and store in temp
             TreeNode temp = root.right;
-            root.right = null;
             
             //attach left child to right of root and make left child null
             root.right = root.left;
             root.left= null;
             
             //attach node stored in temp at the bottom-right of new right child
-            TreeNode right = root.right;
-            while(right.right != null){
-                right = right.right;
+            TreeNode node = root;
+            while(node.right != null){
+                node = node.right;
             }
             
-            right.right = temp;
+            node.right = temp;
         }
         flatten(root.right);
         
