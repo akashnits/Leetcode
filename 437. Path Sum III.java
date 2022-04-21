@@ -14,39 +14,33 @@
  * }
  */
 class Solution {
-    // we need to evaluate path with each node as root
+    // map containing sum as key and it's freq as value
+    // count = count+ map.get(sum[i]-k);
+   
     public int pathSum(TreeNode root, int targetSum) {
         
-        if(root == null)
-            return 0;
-        
-        return solve(root, targetSum);
+       Map<Integer, Integer> map = new HashMap();
+       map.put(0,1);  
+       return calculatePaths(root, targetSum, 0, map); 
     }
     
-    // make each node root for findPath
-    private int solve(TreeNode root, int targetSum){
+    private int calculatePaths(TreeNode root, int k, int sum, Map<Integer, Integer> map){
         if(root == null){
             return 0;
         }
         
-        // traverse the tree
-        return findPath(root, targetSum) +
-               solve(root.left, targetSum) +
-               solve(root.right, targetSum);
+        sum +=  root.val;
+        // initialize count checking if it's equals targetSum
+        int count = map.getOrDefault(sum-k, 0);
+        
+        // increase freq of sum
+        map.put(sum, map.getOrDefault(sum, 0) +1);
+        
+        count += calculatePaths(root.left, k, sum, map)+
+        calculatePaths(root.right, k, sum, map);
+        // restore map 
+        map.put(sum, map.get(sum) -1);
+        return count;
     }
-    
-    
-    // find path with targetSum equals root to any node
-    private int findPath(TreeNode root, int targetSum){
-        if(root == null){
-            return 0;
-        }
-        
-        int result = findPath(root.left, targetSum - root.val) + findPath(root.right, targetSum - root.val);
-        
-        
-        return targetSum == root.val ? ++result : result;
-    }
-    
     
 }
