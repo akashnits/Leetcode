@@ -1,5 +1,5 @@
 private void prims(int[][] graph, int n){
-        // for storing shortest path
+        // for storing min spanning path
         int[] parent = new int[n];
         parent[0]= -1;
         
