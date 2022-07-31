@@ -17,21 +17,11 @@ class Solution {
            }
        }
     
-        StringBuilder sb = new StringBuilder();
-        for(int i=0; i < 26; i++){
-            if(maxFreq[i] > 0){
-                char c = (char) ('a' + i); 
-                String s= Character.toString(c);
-                while(maxFreq[i]-- > 0){
-                    sb.append(s);
-                }
-            }
-        }
         
         ListIterator<String> itr = result.listIterator();
         while(itr.hasNext()){
             String next = itr.next();
-            if(!isSubset(next, sb.toString())){
+            if(!isSubset(next, maxFreq)){
                 itr.remove();
             }
         }
@@ -41,7 +31,7 @@ class Solution {
     }
     
     
-    boolean isSubset(String a, String b){
+    boolean isSubset(String a, int[] maxFreq){
         // check if b is subset of a i.e.  if every letter in b occurs in a including multiplicity.
         int[] freq = new int[26];
         
@@ -49,11 +39,9 @@ class Solution {
             freq[c1-'a']++;
         }
         
-        for(char c2: b.toCharArray()){
-            if(freq[c2-'a'] == 0){
+        for(int i=0; i < 26; i++){
+            if(freq[i] < maxFreq[i]){
                 return false;
-            }else{
-                freq[c2-'a']--;
             }
         }
         return true;
