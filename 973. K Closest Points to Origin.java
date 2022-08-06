@@ -1,15 +1,18 @@
 class Solution {
     public int[][] kClosest(int[][] points, int k) {
         
-        // create priority queue - minHeap as per distance from origin
+        // create priority queue - maxHeap as per distance from origin
         PriorityQueue<Pair<Integer, Integer>> pq = new 
-            PriorityQueue<Pair<Integer, Integer>>((p1, p2) -> 
+            PriorityQueue<Pair<Integer, Integer>>((p2, p1) -> 
                           ((p1.getKey()) * (p1.getKey()) + (p1.getValue()) *                                     (p1.getValue())) -  
                           ((p2.getKey()) * (p2.getKey()) + (p2.getValue()) *                                      (p2.getValue())));
         
         
         for(int[] point: points){
             pq.offer(new Pair(point[0], point[1]));
+            if(pq.size() > k){
+                pq.poll();
+            }
         }
         
         int[][] result = new int[k][2];
