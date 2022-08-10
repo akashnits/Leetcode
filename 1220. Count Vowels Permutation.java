@@ -14,13 +14,24 @@ class Solution {
             dp[1][i] = 1; // path length to self is one
         }
  
-        // Directed graph using the
-        // adjacency matrix
-        int[][] relation = new int[][] {
-            { 1 }, { 0, 2 },
-            { 0, 1, 3, 4 },
-            { 2, 4 }, { 0 }
-        };
+        //using adjacency matrix
+        List<List<Integer>> graph = new ArrayList();
+        for(int j=0; j < 5; j++){
+            graph.add(j, new ArrayList());
+        }
+        
+        // build graph to represent vowel relation u -> v edge
+        graph.get(0).add(1);
+        graph.get(1).add(0);
+        graph.get(1).add(2);
+        graph.get(2).add(0);
+        graph.get(2).add(1);
+        graph.get(2).add(3);
+        graph.get(2).add(4);
+        graph.get(3).add(2);
+        graph.get(3).add(4);
+        graph.get(4).add(0);
+        
  
         // we need to find all N length paths ending at all chars (a,e,i,o,u)
         
@@ -32,7 +43,7 @@ class Solution {
                 dp[i][u] = 0; // no way to reach self with path length > 1
  
                 // Traversing the neighbors
-                for (int v : relation[u]) {
+                for (int v : graph.get(u)) {
  
                     // we have path fron u -> v
                     // so, i length path to reach u is sum of  i-1 length path to all it's neightbors
