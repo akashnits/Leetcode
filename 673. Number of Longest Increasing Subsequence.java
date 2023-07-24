@@ -14,9 +14,12 @@ class Solution {
             for (int j = 0; j < i; j++) {
                 if (nums[i] > nums[j]) {
                     if (dp[j] + 1 > dp[i]) {
+                        // we create a new LIS ending at i using the LIS ending at j, so we reset the count
+                        // to LIS at index j 
                         dp[i] = dp[j] + 1;
                         count[i] = count[j];
                     } else if (dp[j] + 1 == dp[i]) {
+                        // we can add all subsequent LIS of length dp[i], hence count[i] += count[j] 
                         count[i] += count[j];
                     }
                 }
