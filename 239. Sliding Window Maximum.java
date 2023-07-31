@@ -1,37 +1,38 @@
 class Solution {
     public int[] maxSlidingWindow(int[] nums, int k) {
-        Deque<Integer> queue = new ArrayDeque<Integer>();
+        // fixed size sliding window
+
+        int start =0;
+        int end =0;
+
         int n = nums.length;
-        int[] result = new int[n-k+1];
-        int lo=0; 
-        int hi =0;
-        
-        while(hi <= n-1){
-            
-            // we exapnd here
-            while(!queue.isEmpty() && nums[hi] > queue.peekLast()){
-                // we pop from back of queue
-                queue.pollLast();
+        int[] res = new int[n-k+1];
+
+        ArrayDeque<Integer> deque = new ArrayDeque(); // queue containing indices, we are only interested in elements which are after the max window element
+        // monotonically decreasing queue
+
+        while(end < n){
+
+            while(!deque.isEmpty() && nums[deque.peekLast()] <= nums[end] ){
+                // pop last from the queue
+                deque.pollLast();
             }
-            queue.offer(nums[hi]);
-            
-            
-            // we check if desired window reached
-            int windowSize = hi-lo+1;
-            if(windowSize == k){
-                // front of the queue contains max value
-                result[lo] = queue.peek();
-                
-                // time to shrink the window
-                if(nums[lo] == queue.peek()){
-                    // we need to pop front as we shrink
-                     queue.pop();
+            // add nums[end] to the queue
+            deque.offer(end);
+
+            if(end - start + 1 == k){ // valid window, shrink now after calculating max
+                res[start] = nums[deque.peek()];
+
+                if(start == deque.peek()){
+                    deque.pop();
                 }
-                lo++;
+                // shrink here
+                start++;
             }
-            hi++;
+
+            // expand here
+            end++;
         }
-        
-        return result;
+        return res;
     }
 }
