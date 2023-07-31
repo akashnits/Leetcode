@@ -1,57 +1,65 @@
 class Solution {
     public String minWindow(String s, String t) {
-        int n = s.length();
-        String result = "";
-        int i=0, j=0;
-        
-        
-        
-        Map<Character, Integer> freqMap = new HashMap();
-        for(char c: t.toCharArray()){
-            freqMap.put(c, freqMap.getOrDefault(c, 0) +1);
+
+        String res = "";
+        int minLength = s.length();
+        // corner case
+        if(t.length() > s.length()){
+            return res;
         }
-        int charsToFind = freqMap.size();
-        int windowLength =0;
-        int minWindowLength = s.length()+1;
+
+        Map<Character, Integer> windowsMap = new HashMap();
+        for(char c: t.toCharArray()){
+            windowsMap.put(c, windowsMap.getOrDefault(c, 0)+1);
+        }
+
+        int distChars = windowsMap.size(); // distChars count to be found
         
-        while( j < n ){
-            
-            // include char at j
-            char charAtHi = s.charAt(j);
-            // check if char is of interest
-            if(freqMap.containsKey(charAtHi)){
-                // we have found a char, decrement freq
-                freqMap.put(charAtHi, freqMap.get(charAtHi)-1);
-                if(freqMap.get(charAtHi) == 0){
-                    // we have one less chars to find
-                    charsToFind--;
+        int start =0, end =0;
+
+        int n = s.length();
+        
+        // variable size sliding window algorithm
+
+        while(end < n){
+            char chAtEnd = s.charAt(end);
+            // check if char is contained in the map
+            if( windowsMap.containsKey(chAtEnd) ){
+                int freq = windowsMap.get(chAtEnd) -1;
+                windowsMap.put(chAtEnd, freq);
+                if(freq == 0){
+                    // we have found this char, reduce distChars count to be found
+                    distChars--;
                 }
             }
-            
-            
-            
-            // shrink here until we drop a char we wanted i.e. charsToFind becomes 1
-            while(charsToFind == 0){
-                // check if possible candidate 
-                windowLength = j-i+1;
-                if(windowLength < minWindowLength){
-                    result = s.substring(i, i+ windowLength);
-                    minWindowLength = windowLength;
+
+            // check for window validity
+            while(start <= end && distChars == 0){
+                // calculate length
+                int length = end - start +1;
+                if(length <= minLength){
+                    res = s.substring(start, end+1);
+                    minLength = length;
                 }
-                char charAtLo = s.charAt(i);
-                // check if char is of interest
-                if(freqMap.containsKey(charAtLo)){
-                    freqMap.put(charAtLo, freqMap.get(charAtLo)+1);
-                    if(freqMap.get(charAtLo) == 1){
-                        // we dropped a char we needed
-                    charsToFind++;
+
+                char chAtStart = s.charAt(start);
+                if(windowsMap.containsKey(chAtStart)){
+                    int freq = windowsMap.get(chAtStart) +1;
+                    windowsMap.put(chAtStart, freq);
+                    if(freq > 0){
+                        // we have dropped a required char, made window invalid
+                        distChars++;
                     }
                 }
-                i++;
+
+                // shrink here
+                start++;
             }
-            j++;
+
+            // expand here
+            end++;
         }
-        
-        return minWindowLength == s.length()+1 ? "": result;
+
+        return res;
     }
 }
