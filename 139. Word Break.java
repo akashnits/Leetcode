@@ -35,45 +35,52 @@ class Solution {
 
 
 class Solution {
-    // state variable -> start varies from 0 to n
+    // Approach: partitioning problem: choices is to partition from len 1 to strLen-start
+    // explore all possibilities and return if true as we want just one valid sequence 
+    Set<String> dict;
     public boolean wordBreak(String s, List<String> wordDict) {
         int n = s.length();
-        Boolean[] dp = new Boolean[n];
-        return solve(s, wordDict, 0, dp);
+        // initialize dict
+        dict = new HashSet();
+        for(String str: wordDict){
+            dict.add(str);
+        }
+
+        return partition(s, 0, new Boolean[n]); 
     }
-    
-    boolean solve(String s, List<String> wordDict, int start, Boolean[] dp){
-        
+
+
+    boolean partition(String s, int start, Boolean[] dp){
         // base condition
         if(start == s.length()){
+            //we have reached the end, return true
             return true;
         }
-        
+
         if(dp[start] != null){
             return dp[start];
         }
-        
-        // choice diagram
-        for(String word: wordDict){
-            if(canPick(word, s, start)){
-                if(solve(s, wordDict, start+ word.length(), dp)){
-                    dp[start] = true;
-                    return true;
-                }
+
+        // choices we have, we want to partition from length 1 to strLen-start
+
+        for(int i=1; i <= s.length()- start; i++){
+            String word = s.substring(start, start + i);
+            if(!canPick(word)) continue;
+
+            // we can pick this, explore and partition futher 
+            dp[start] = partition(s, start + word.length(), dp);
+            if(dp[start]){
+                return true; // we can return true if any exploration lead to a valid sequence 
             }
         }
+
         dp[start] = false;
         return dp[start];
     }
-    
-    
-    boolean canPick(String word, String s, int start){
-        
-        int end = start + word.length();
-        if(end > s.length()){
-            return false;
-        }
-        String toCompare= s.substring(start, end);
-        return toCompare.equals(word);
+
+
+
+    boolean canPick(String word){
+        return dict.contains(word);
     }
 }
