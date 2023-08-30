@@ -7,11 +7,7 @@ class Solution {
         long res = 0;
         int upperBound = nums[n-1];
 
-        for(int j= n-2; j >=0; j--){
-            // check if nums[j] > nums[j+1]
-
-            if(nums[j] <= upperBound) continue; // already sorted
-            
+        for(int j= n-2; j >=0; j--){            
             int noOfElems = nums[j] / upperBound;
 
             // if completely divisible - upper bound doesn't change
