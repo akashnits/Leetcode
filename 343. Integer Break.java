@@ -21,9 +21,9 @@ class Solution {
 
         int res = n-1; // we can split the number as (1, n-1)
         // choices we have to split the integer
-        for(int i=2; i < n; i++){
+        for(int i=2; i <= n/2; i++){ // split as (2, n-2), (3, n-3) .... (n/2, n/2)
             // if we split: i * solve(n-i)
-            dp[n] = Math.max(res, i * solve(n-i, dp));
+            dp[n] = Math.max(res, i * solve(n-i, dp)); // maximum of all is the ans
             res = dp[n];
         }
         return dp[n] = res;
