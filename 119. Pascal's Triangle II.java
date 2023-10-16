@@ -23,12 +23,16 @@ class Solution {
     
     // dp approach
     public List<Integer> getRow(int rowIndex) {
-      Integer[] result =  new Integer[rowIndex + 1];
-      Arrays.fill(result, 0);
-      result[0] = 1;
-      for(int i = 1; i < rowIndex + 1; i++)
-        for(int j = i; j >= 1; j--)
-          result[j] += result[j - 1];
-      return Arrays.asList(result);
+        List<Integer> list = new ArrayList<Integer>();
+	    if (rowIndex < 0)
+		    return list;
+
+	    for (int i = 0; i < rowIndex + 1; i++) {
+		    list.add(0, 1);
+		    for (int j = 1; j < list.size() - 1; j++) {
+			    list.set(j, list.get(j) + list.get(j + 1));
+		    }
+	    }
+	    return list;
     }
 }
