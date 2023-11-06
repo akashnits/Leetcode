@@ -1,4 +1,5 @@
 class Solution {
+    // Imp: once a player loses, it's of no use as we need to find the player who wins K consecutive games first
     public int getWinner(int[] arr, int k) {
         int max =0;
         for(int ele: arr){
