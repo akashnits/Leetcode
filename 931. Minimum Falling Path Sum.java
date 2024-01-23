@@ -1,37 +1,42 @@
 class Solution {
-    // dp[i][j] represents the min sum of falling path at i,j
+    int minSum = Integer.MAX_VALUE;
+    int[] fallDirs = {-1, 0, 1};
     public int minFallingPathSum(int[][] matrix) {
-          int n = matrix.length;
-          int dp[][] = new int[n][n];
-          
+        // dp[i][j] represents the sum at given i, j
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][]dp = new int[m][n];
+        for(int[] row: dp){
+            Arrays.fill(row, Integer.MAX_VALUE);
+        }
+        // start at each col in the first row
+        int res = Integer.MAX_VALUE;
+        for(int j=0; j < n; j++){
+            res = Math.min(res, calculateMinSum(matrix, 0, j, dp));
+        }
+        return res;
+    }
 
-          dp[0][0] = matrix[0][0];
-          // initialize dp array
-          for(int j=1; j < n; j++){
-              dp[0][j] = matrix[0][j];
-          }
+    int calculateMinSum(int[][] matrix, int row, int col, int[][] dp){
+        if(row == matrix.length){
+            // we have reached the end
+            return 0;
+        }
 
 
-          for(int i=1; i< n; i++){
-              for(int j=0; j< n; j++){
-                  if(j == 0){
-                      if(j == n-1){
-                        dp[i][j] = dp[i-1][j];  
-                      }else{
-                       dp[i][j] = Math.min(dp[i-1][j], dp[i-1][j+1]) + matrix[i][j];
-                      }
-                  }else{
-                      dp[i][j] = (j == n-1? 
-                              Math.min(dp[i-1][j], dp[i-1][j-1])
-                              : Math.min(dp[i-1][j], Math.min(dp[i-1][j-1],dp[i-1]                                   [j+1]))) + matrix[i][j];
-                  }
-              }
-          }
-          int min = dp[n-1][0];  
-          for(int j=1; j < n; j++){
-              min = Math.min(min, dp[n-1][j]);
-          }  
+        if(dp[row][col] != Integer.MAX_VALUE){
+            return dp[row][col];
+        }
 
-          return min;
+        // choice we have 
+        for(int dir: fallDirs){
+            // skip if col is out of bounds
+            if(dir+col < 0 || dir+col > matrix[0].length-1){
+                continue;
+            }
+            dp[row][col] = Math.min(dp[row][col], 
+                                matrix[row][col] + calculateMinSum(matrix, row+1, dir+col, dp)); 
+        }
+        return dp[row][col];
     }
 }
