@@ -1,23 +1,22 @@
 class Solution {
     public int[] nextGreaterElements(int[] nums) {
-        Stack<Integer> stack = new Stack();
-        int[] res = new int[nums.length];
-        for(int i=0;i<nums.length;i++) {
-            while(!stack.isEmpty() && nums[stack.peek()] < nums[i]) {
-                res[stack.pop()] = nums[i];
-            }
-            stack.push(i);
-    }
-    
-    for(int i=0;i<nums.length;i++) {
-        while(!stack.isEmpty() && nums[stack.peek()] < nums[i]) {
-            res[stack.pop()] = nums[i];
-        }
-    }
+        // find the next greater element in circular array
+        // algo remain as is except that we traverse the array twice
 
-    while(!stack.isEmpty()) {
-        res[stack.pop()] = -1;
+        int n = nums.length;
+        Stack<Integer> stack = new Stack();
+        int[] ans = new int[n];
+        Arrays.fill(ans, -1);
+
+        for(int i=0; i < 2*n; i++){
+            // we check if incoming element is greater than stack top
+            while(!stack.isEmpty() && nums[i % n] > nums[stack.peek()]){
+                // yes - pop as it's next greater element
+                int idx = stack.pop();
+                ans[idx] = nums[i % n];
+            }
+            stack.push(i % n); // we push  this index to find it's greater
         }
-    return res;
+        return ans;
     }
 }
