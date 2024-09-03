@@ -34,3 +34,39 @@ class Solution {
         return dummyNode.next;
     }
 }
+
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        if(head == null){
+            return null;
+        }
+
+        ListNode curr = head.next;
+
+        if(curr != null){
+            ListNode next = curr.next;
+            ListNode reversedHead = swapNodes(head, curr);
+            head.next = swapPairs(next);
+            return reversedHead;
+        }else{
+            return head;
+        }
+    }
+
+    ListNode swapNodes(ListNode first, ListNode second){
+        second.next = first;
+        first.next = null;
+        return second;
+    }
+}
