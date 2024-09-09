@@ -10,35 +10,52 @@
  */
 class Solution {
     public ListNode[] splitListToParts(ListNode head, int k) {
-        ListNode[] ans = new ListNode[k];
-
         ListNode itr = head;
-        int n= 0;
+        int size = 0;
+
         while(itr != null){
-            n++;
             itr = itr.next;
+            size++;
         }
 
-        int extraItems = n % k;
+        
+        if(size == k){
+            // all list of size 1
+            return partition(head, k, 1 , 0);
+        }else if(k > size){
+            // all lists of size 1 or 0
+            // k - size nodes would be null
+            return partition(head, k, 1, 0);
+        }else{
+            // list size would be n /k
+            // n % k would be extra nodes to accomodate
+            return partition(head, k, size / k , size % k);
+        }
+    }
 
-        ListNode curr = head;
-        for(int part=0; part < k; part++){
-            // for each part, create a ListNode chain of size partitionLength + 1 ( if we have extraItems)
-            int partitionLength = n/k + (extraItems-- > 0 ? 1: 0);
-            // loop for partition length and create a chain
-            if(curr == null) break;
-            ListNode prev = new ListNode(curr.val, null);
-            ans[part] = prev;
-            for(int i=1; i< partitionLength; i++){
-                curr = curr.next;
-                if(curr == null) break;
-                ListNode currNode = new ListNode(curr.val, null);
-                prev.next = currNode;
-                prev = currNode;
+    ListNode[] partition(ListNode head, int k, int size, int extraNodes){
+        ListNode[] res = new ListNode[k];
+        ListNode dummyNode = new ListNode();
+        ListNode curr = dummyNode;
+        curr.next = head;
+
+        int count = 0;
+        int idx = 0;
+        while(count < k && curr != null){
+            res[idx++] = curr.next;
+            curr.next = null;
+            curr = res[idx-1];
+            int subLen = size-1; // we have already added head to sublist
+            while(subLen-- > 0 && curr != null){
+                curr= curr.next;
             }
-            if(curr != null) curr= curr.next;
+            // check if we have extra nodes to accomodate
+            if(extraNodes > 0 && curr != null){
+                curr = curr.next;
+                extraNodes--;
+            }
+            count++;
         }
-
-        return ans;
+        return res;
     }
 }
