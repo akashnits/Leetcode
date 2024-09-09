@@ -25,6 +25,9 @@ class Solution {
                         continue;
                     }
                     int neighbor = newRow * n + newCol;
+                    // calling union means the node is reachable, thus both should be part of same set
+                    // if already in same set - it means it was already connected, island count remains same
+                    // if in different set, it's been connected now, island count reduces by 1
                     dsu.union(node, neighbor);
                 }
             }
