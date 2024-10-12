@@ -3,9 +3,7 @@ class Solution {
     public int minReorder(int n, int[][] connections) {
         // keep track of actual edges
         // keep track of psuedo egdes
-        
-        // res = actualEdges - psuedoEdge required to go to neighbor
-        
+                
         // create a graph
         List<List<GraphNode>> graph = new ArrayList();
         
@@ -18,13 +16,13 @@ class Solution {
         for(int[] edge: connections){
             int u = edge[0];
             int v= edge[1];
-            graph.get(u).add(new GraphNode(v, false));
-            graph.get(v).add(new GraphNode(u, true));
+            graph.get(u).add(new GraphNode(v, true));
+            graph.get(v).add(new GraphNode(u, false));
         }
         
         // dfs on graph using actual and psuedo edges
         dfs(graph, 0, new boolean[n]);
-        return actualEdges - requiredPsuedoEdges;
+        return requiredPsuedoEdges;
     }
     
     
