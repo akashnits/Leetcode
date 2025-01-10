@@ -1,5 +1,8 @@
 class Solution {
-    
+    // Intuition - for any word to be universal in the array words1, it must include all the characters from all words in words2 array
+    // i.e. if we keep track of chars appearing in words2 array, we could say if it's universal or not
+    // store the max frequency of the char appearing across all words in words2 - maxFreqArr
+    // for a word to be universal, the frequency of every char in universal word freq arr > frequency of every char store in maxFreqArr
     public List<String> wordSubsets(String[] words1, String[] words2) {
         
         List<String> result = new ArrayList();
