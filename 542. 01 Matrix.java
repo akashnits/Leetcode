@@ -1,26 +1,31 @@
-class Solution { 
-    public int[][] updateMatrix(int[][] mat) {
-        int m = mat.length, n = mat[0].length, INF = m + n; // The distance of cells is up to (M+N)
-        // move from top left to right bottom, computing mat[r][c] based on top and left
-        for (int r = 0; r < m; r++) {
-            for (int c = 0; c < n; c++) {
-                if (mat[r][c] == 0) continue;
-                int top = INF, left = INF;
-                if (r - 1 >= 0) top = mat[r - 1][c];
-                if (c - 1 >= 0) left = mat[r][c - 1];
-                mat[r][c] = Math.min(top, left) + 1;
+class Solution {
+    // dp two pass approach to find the min distance
+    public int[][] updateMatrix(int[][] matrix) {
+        int m = matrix.length, n = matrix[0].length;
+        int[][] dist = new int[m][n];
+        int maxRange = m * n; // Large enough value instead of Integer.MAX_VALUE
+
+        // First pass (Top-left to Bottom-right)
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == 0) {
+                    dist[i][j] = 0;
+                } else {
+                    dist[i][j] = maxRange;
+                    if (i > 0) dist[i][j] = Math.min(dist[i][j], dist[i - 1][j] + 1);
+                    if (j > 0) dist[i][j] = Math.min(dist[i][j], dist[i][j - 1] + 1);
+                }
             }
         }
-        // move from bottom right to left top, computing mat[r][c] based on bottom , right and mat[r][c]
-        for (int r = m - 1; r >= 0; r--) {
-            for (int c = n - 1; c >= 0; c--) {
-                if (mat[r][c] == 0) continue;
-                int bottom = INF, right = INF;
-                if (r + 1 < m) bottom = mat[r + 1][c];
-                if (c + 1 < n) right = mat[r][c + 1];
-                mat[r][c] = Math.min(mat[r][c], Math.min(bottom, right) + 1);
+
+        // Second pass (Bottom-right to Top-left)
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                if (i < m - 1) dist[i][j] = Math.min(dist[i][j], dist[i + 1][j] + 1);
+                if (j < n - 1) dist[i][j] = Math.min(dist[i][j], dist[i][j + 1] + 1);
             }
         }
-        return mat;
+
+        return dist;
     }
 }
