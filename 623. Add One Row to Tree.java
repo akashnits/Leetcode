@@ -13,6 +13,7 @@
  *     }
  * }
  */
+// bfs
 class Solution {
     public TreeNode addOneRow(TreeNode root, int val, int depth) {
         // handle base case
@@ -68,3 +69,78 @@ class Solution {
         }
     }
 }
+
+class Solution {
+    public TreeNode addOneRow(TreeNode root, int val, int depth) {        
+        return solve(root, val, 1, depth);
+    }
+
+    TreeNode solve(TreeNode root, int val, int currLevel, int targetDepth) {
+        if (root == null) return null;
+
+        if (targetDepth == 1) {
+            TreeNode newRoot = new TreeNode(val);
+            newRoot.left = root;
+            return newRoot;
+        }
+
+        if (currLevel == targetDepth - 1) {
+            // Create new nodes and insert them between current node and its children
+            TreeNode leftNodeNew = new TreeNode(val);
+            TreeNode rightNodeNew = new TreeNode(val);
+
+            leftNodeNew.left = root.left;
+            rightNodeNew.right = root.right;
+
+            root.left = leftNodeNew;
+            root.right = rightNodeNew;
+
+            return root;
+        }
+
+        // Recursively go deeper
+        root.left = solve(root.left, val, currLevel + 1, targetDepth);
+        root.right = solve(root.right, val, currLevel + 1, targetDepth);
+
+        return root;
+    }
+}
+
+// dfs
+class Solution {
+    public TreeNode addOneRow(TreeNode root, int val, int depth) {        
+        return solve(root, val, 1, depth);
+    }
+
+    TreeNode solve(TreeNode root, int val, int currLevel, int targetDepth) {
+        //base conditions:
+        if (root == null) return null;
+
+        if (targetDepth == 1) {
+            TreeNode newRoot = new TreeNode(val);
+            newRoot.left = root;
+            return newRoot;
+        }
+
+        if (currLevel == targetDepth - 1) {
+            // Create new nodes and insert them between current node and its children
+            TreeNode leftNodeNew = new TreeNode(val);
+            TreeNode rightNodeNew = new TreeNode(val);
+
+            leftNodeNew.left = root.left;
+            rightNodeNew.right = root.right;
+
+            root.left = leftNodeNew;
+            root.right = rightNodeNew;
+
+            return root;
+        }
+
+        // Recursively go deeper
+        root.left = solve(root.left, val, currLevel + 1, targetDepth);
+        root.right = solve(root.right, val, currLevel + 1, targetDepth);
+
+        return root;
+    }
+}
+
