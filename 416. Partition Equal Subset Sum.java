@@ -1,51 +1,79 @@
 class Solution {
-    //Using top-down approach
-    // for dividing a array into two equal parts is same as
-    // finding a subset which sums to arraySum/2
     public boolean canPartition(int[] nums) {
-        int sum=0;
-        for(int i= 0; i< nums.length; i++){
-            sum  = sum + nums[i];
+        // totalSum
+        int totalSum = 0;
+        for(int num: nums){
+            totalSum += num;
         }
-        
-        if(sum % 2 != 0){
+
+        // edge condition
+        if(totalSum % 2 == 1){
             return false;
+        }
+
+        int n = nums.length;
+        int subsetSum = totalSum / 2;
+        Boolean[][] dp = new Boolean[n][subsetSum+1];
+
+        return doesSubsetExist(nums, subsetSum);
+    }   
+
+    // top -down approach
+    boolean doesSubsetExist(int[] nums, int idx, int subsetSum, Boolean[][] dp){
+        // base conditions:
+
+        // return true if subset is found
+        if(subsetSum == 0){
+            return true;
+        }
+
+        if(idx == nums.length){
+            return false;
+        }
+
+        if(dp[idx][subsetSum] != null){
+            return dp[idx][subsetSum];
+        }
+
+        if(nums[idx] <= subsetSum){
+            // may include or may not
+            dp[idx][subsetSum] = doesSubsetExist(nums, idx+1, subsetSum - nums[idx], dp) || 
+                   doesSubsetExist(nums, idx+1, subsetSum, dp);
         }else{
-            int sumToFind= sum/2;
-            return subsetSum(nums, nums.length, sumToFind, new boolean[nums.length+1][sumToFind+1]);
+            // don't include
+            dp[idx][subsetSum] = doesSubsetExist(nums, idx+1, subsetSum, dp);
         }
+        return dp[idx][subsetSum];
     }
-    
-    boolean subsetSum(int[] nums, int n, int sum, boolean[][] dp){
-        //intialize dp array
-        //initialize(dp, n, sum);
-        dp[0][0] = true;
-        //choices
+
+    // bottom up approach
+    boolean doesSubsetExist(int[] nums, int subsetSum){
+        int n = nums.length;
+        boolean[][] dp = new boolean[n+1][subsetSum+1];
+        // initialize the matrix - first row and column
+        for(int row=0; row <= n; row++){
+            dp[row][0] = true;
+        }
+
+        for(int col=1; col <= subsetSum; col++){
+            dp[0][col] = false;
+        }
+
+        // matrix of dimens: n * subsetSum
         for(int i = 1; i < n+1; i++){
-            for(int j =1; j< sum+1; j++){
+            for(int j = 1; j < subsetSum+1; j++){
+                // 0/1 knapsack
+                // check if we can take the element
                 if(nums[i-1] <= j){
-                    dp[i][j] = dp[i-1][j-nums[i-1]] || dp[i-1][j];
+                    // we may include or exclude
+                    dp[i][j] = dp[i-1][j - nums[i-1]] || dp[i-1][j];
                 }else{
-                    dp[i][j]= dp[i-1][j];
+                    // must exclude
+                    dp[i][j] = dp[i-1][j];
                 }
             }
         }
-        return dp[n][sum];
-    }
-    
-    void initialize(boolean[][] dp, int n, int sum){
-        for(int i=0; i< n; i++){
-            for(int j=0; j< sum; j++){
-                if( i == 0 && j == 0 ){
-                    dp[i][j] = true;
-                }else if( j==0 ){
-                    //iterating first column
-                    dp[i][j] = true;
-                }else if( i ==0 ){
-                    //iterating first row
-                    dp[i][j]= false;
-                }
-            }
-        }
+
+        return dp[n][subsetSum];
     }
 }
