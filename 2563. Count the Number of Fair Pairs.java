@@ -15,7 +15,7 @@ class Solution {
             int upperIdx = equalOrNextSmaller(nums, 0, i-1, upperVal);
 
             // none of the lowerIdx or upperIdx should be invalid
-            if(lowerIdx == -1 || upperIdx == -1){
+            if(lowerIdx > upperIdx){
                 continue;
             }else{
                 res += upperIdx - lowerIdx + 1;
@@ -39,12 +39,10 @@ class Solution {
     }
 
     int equalOrNextSmaller(int[] nums, int l, int r, int val){
-        int possibleIdx = -1;
         while(l <= r){
             int mid = l + (r - l)/2;
             if(nums[mid] <= val){
                 // move right
-                possibleIdx = mid;
                 l = mid+1;
             }else{
                 // move left
