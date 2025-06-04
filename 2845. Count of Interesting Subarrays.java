@@ -3,9 +3,6 @@ class Solution {
     // which satisfies the condition :- nums[i] % modulo == k
 
     // we want to find subarrays (start, end] where (prefixSum[end] - prefixSum[start]) % modulo == k
-    // re-writing the equation:
-    //  prefixSum[end] % modulo == (k + prefixSum[start]) % modulo
-    // i.e. count how many times you have seen this val- (k + prefixSum[start]) % modulo
     public long countInterestingSubarrays(List<Integer> nums, int modulo, int k) {
         long res = 0;
         // pre-compute prefix count
