@@ -3,47 +3,62 @@
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
-        int count = 0;
+        // base conditions:
+        if(k == 1){
+            return head;
+        }
+
+        if(head == null || head.next == null){
+            return head;
+        }
+
+        if(size(head) < k){
+            return head;
+        }
+
         ListNode curr = head;
-
-        // First, see if there are atleast k nodes
-        // k-1 edges at least
-        while (count < k && curr != null) {
+        // advance by k-1 times
+        int i = k-1;
+        while(i-- > 0){
             curr = curr.next;
-            count++;
         }
-
-        if(count == k){
-            // we can reverse list
-            ListNode reversedHead = reverseLinkedList(head, curr);
-            // how to link after reversal ? we need to link head ( after reversal, this would be the last node)
-            // with result of reverseKGroup
-            // so head.next == result of reverseKGroup
-            head.next = reverseKGroup(curr, k);
-            return reversedHead;
-
-        }else{
-            return head; // couldn't reverse and less than k nodes
-        }
+        // break list into parts: list of size k and rest of the list
+        ListNode reversedKGroupNode = reverseKGroup(curr.next, k);
+        curr.next = null;
+        ListNode reversedNode = reverseList(head, head.next);
+            
+        // combine above lists after reversal
+        head.next = reversedKGroupNode;
+        return reversedNode;
     }
 
-
-    public ListNode reverseLinkedList(ListNode curr, ListNode end) {
-        ListNode prev = null;
-
-        while (curr != end) {
-            ListNode nextNode = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = nextNode;
+    ListNode reverseList(ListNode curr, ListNode next){
+        if(next == null){
+            return curr;
         }
 
-        // Return the head of the reversed list
-        return prev;
+        // break lists into two parts
+        ListNode reversedHead = reverseList(next, next.next);
+
+        // combine them
+        next.next = curr;
+        curr.next= null;
+        return reversedHead;
+    }
+
+    int size(ListNode head){
+        int count = 0;
+        while(head != null){
+            head = head.next;
+            count++;
+        }
+        return count;
     }
 }
