@@ -48,4 +48,48 @@ class Solution {
 
         return res;
     }
+
+// DP solution
+class Solution {
+    private final Map<String, Integer> memo = new HashMap<>();
+
+    public int totalFruit(int[] fruits) {
+        // idx, type1, type2, started=false initially
+        return dp(fruits, 0, -1, -1, false);
+    }
+
+    private int dp(int[] fruits, int idx, int type1, int type2, boolean started) {
+        if (idx == fruits.length) return 0;
+
+        String key = idx + "|" + type1 + "|" + type2 + "|" + (started ? 1 : 0);
+        Integer cached = memo.get(key);
+        if (cached != null) return cached;
+
+        int f = fruits[idx];
+        int ans;
+
+        if (!started) {
+            // Option 1: don't start here (skip)
+            int skip = dp(fruits, idx + 1, type1, type2, false);
+            // Option 2: start here by picking this fruit, put in basket 1
+            int take = 1 + dp(fruits, idx + 1, f, -1, true);
+            ans = Math.max(skip, take);
+        } else {
+            // Already started: must pick or stop (no skipping)
+            if (f == type1 || f == type2) {
+                ans = 1 + dp(fruits, idx + 1, type1, type2, true);
+            } else if (type2 == -1) {
+                // second basket still empty: fill it and pick
+                ans = 1 + dp(fruits, idx + 1, type1, f, true);
+            } else {
+                // third type with both baskets full: must stop
+                ans = 0;
+            }
+        }
+
+        memo.put(key, ans);
+        return ans;
+    }
+}
+
 }
