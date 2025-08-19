@@ -3,6 +3,11 @@ class Solution {
     // variable size sliding window pattern - keep track of type of tree ( use a map)
     // return maxLength of the window
 
+    // notes: we can use dp as well but the complexity would be more. The reason Sliding window works is due to the fact that
+    // ONCE you pick a fruit , you can't skip picking. This leads to contigous array patten and the problem transform to finding the longest 
+    // subarray with at most 2 distinct elements
+    // If you were allowed to skip fruits after picking  the first one, we need to use recursion/dp
+
     
     public int totalFruit(int[] fruits) {
         int count = 0; // keeps track of type of trees in the window
