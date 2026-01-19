@@ -1,40 +1,47 @@
 class Solution {
-    // approach: don't put node and neighbor in the same color
-    // if we find node and neighbor in same color, it's not bipartite
-
-    // define colors - {0,1,2} ; 0 -> unprocessed , 1 -> color 1, 2 -> color 2
-
-    boolean res = true;
+    // idea is to do dfs and color nodes if not visitied , check color if visited
+    // so, we need colors and visited array
+    // color can be represented by 0/1
+    // if any two adjacent nodes could be painted by same color, graph is not bipartite
+    int[] colors;
     public boolean isBipartite(int[][] graph) {
-        
-        int n = graph.length; // number of nodes
-        int[] colorArr = new int[n]; // all color '0' to signify unprocessed 
-        // put this in the loop as this can non-connected graph
-        for(int i=0; i < n; i++){
-            if(res && colorArr[i] == 0){
-                graphDfs(graph, i, colorArr, 1);
+        int n = graph.length; // number of nodes ( 0, 1, 2, ...)
+
+        colors = new int[n]; // store colors
+        Arrays.fill(colors, -1);
+
+        // graph may be disconnected, so we start dfs at each node if not already visited
+        for(int v=0; v < n; v++){
+            if(colors[v] == -1){
+                // not visited, we can either assign 0 or 1 - doesn't matter as it's the first node of the component
+                colors[v] = 0;
+                if(!dfs(graph, v, 1)) // color 1 available for neighbors
+                    return false;
             }
         }
-        return res;
+        return true;
     }
 
 
-    void graphDfs(int[][] graph, int v, int[] colorArr, int color){
-        if(res == false){
-            return;
-        }
-        // check if the node has been visited
-        if(colorArr[v] != 0){
-            // it's been visited, if incoming color != colorArr[v], it's not bipartite
-            if(color != colorArr[v]){
-                res= false;
+    boolean dfs(int[][] graph, int v, int paintNb){
+        // find the neighbors
+        int[] neighbors = graph[v];
+        for(int neighbor: neighbors){
+            // check if visited or not
+            if(colors[neighbor] != -1){
+                // color should be same as prev, else return false
+                if(paintNb != colors[neighbor])
+                    return false;
+            }else{
+                // not visited
+                // color it
+                colors[neighbor] = paintNb;
+                // call dfs
+                if(!dfs(graph, neighbor, (paintNb == 0?1: 0))){
+                    return false;
+                }
             }
-            return;
-        } 
-        //mark it visited by putting in a color and go on
-        colorArr[v] = color;
-        for(int neighbor: graph[v]){
-            graphDfs(graph, neighbor, colorArr,  color == 1? 2: 1);
         }
+        return true;
     }
 }
