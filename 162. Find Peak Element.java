@@ -36,3 +36,24 @@ class Solution {
         return 0;
     }
 }
+
+class Solution {
+    public int findPeakElement(int[] nums) {
+        // boundary finding question
+        int n = nums.length;
+        int l = 0, r = n-1;
+
+        // slope decide the boundary - we can eliminate the half which is decreasing ( downward slope )
+
+        while(l < r){
+            int mid = l + (r-l)/2;
+
+            if(nums[mid] > nums[mid+1]){ // check for downward slope
+                r = mid; // eliminate right half
+            }else{
+                l = mid+1;
+            }
+        }
+        return l; // at last l == r
+    }
+}
