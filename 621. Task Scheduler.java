@@ -1,54 +1,27 @@
 class Solution {
     public int leastInterval(char[] tasks, int n) {
-        // we need to process tasks with max freq first to avoid idle time later
-        // use priority queue to keep max frequency at the top
-
-        // create a freq arr
+        int maxFreq = 0;
         int[] freq = new int[26];
-        for(char task: tasks){
-            freq[task - 'A']++;
+        for (char c : tasks) {
+            freq[c - 'A']++;
+            maxFreq = Math.max(maxFreq, freq[c - 'A']);
+        }
+        
+        int countMax = 0;
+
+        // count how many tasks have max frequency
+        for (int i = 25; i >= 0; i--) {
+            if (freq[i] == maxFreq) countMax++;
         }
 
-        // maxHeap based on frequency
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>((a, b) -> (b - a));
+        // A _ _ | A _ _ | A 
+        // A is the most frequent; part length is 3 since n ==2; partCount is maxFreq-1
+        // why countMax si added ? (partCount * partLength) doesn't include the last block
+        // last block is equals number of elements having max frequency
+        int partCount = maxFreq - 1; 
+        int partLength = n + 1;
+        int minTime = partCount * partLength + countMax;
 
-        for(int f: freq){
-            if(f > 0){
-                maxHeap.offer(f);
-            }
-        }
-
-        int waitTime = 0; 
-
-        while(!maxHeap.isEmpty()){
-            // keep track of freq of tasks picked in this cycle
-            List<Integer> freqList = new ArrayList();
-            // we need to pick n+1 tasks if possible
-            for(int i=0; i < n+1; i++){
-                if(maxHeap.isEmpty()){
-                    break;
-                }else{
-                    // process task, we pop from maxHeap and keep track
-                    freqList.add(maxHeap.poll()-1);
-                }
-            }
-
-            // loop through freqList and add back to maxHeap if freq > 0
-            for(int ele: freqList){
-                if(ele > 0){
-                    maxHeap.offer(ele);
-                }
-            }
-
-            // check if we have tasks to be completed ?
-            if(!maxHeap.isEmpty()){
-                waitTime += n+1; // includes idle time
-            }else{
-                waitTime += freqList.size();
-            }
-            
-        }
-
-        return waitTime;
+        return Math.max(tasks.length, minTime);
     }
 }
