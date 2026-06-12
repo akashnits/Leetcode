@@ -15,53 +15,36 @@
  */
 class Solution {
     public TreeNode createBinaryTree(int[][] descriptions) {
-        // create a map for parent -> [left, right]
-        Map<Integer, Integer[]> map = new HashMap();
-        // create a set for children
-        Set<Integer> childrenSet = new HashSet();
+        Set<TreeNode> childNodes = new HashSet(); 
+        // values to treenode
+        Map<Integer, TreeNode> map = new HashMap();
+        for (int[] description : descriptions) {
+            int rootVal = description[0];
+            int childVal = description[1];
 
-        for(int[] description: descriptions){
-            int parentVal = description[0];
-            if(map.get(parentVal) == null){
-                map.put(parentVal, new Integer[2]);
-            }
+            // get or create root node
+            TreeNode rootNode = map.computeIfAbsent(rootVal, k -> new TreeNode(rootVal));
 
-            Integer[] children = map.get(parentVal);
-            if(description[2] == 0){
-                // right child
-                children[1] = description[1];
-            }else{
-                // left child
-                children[0] = description[1];
-            }
-            childrenSet.add(description[1]);
-        }
+            TreeNode childNode = map.computeIfAbsent(childVal, k -> new TreeNode(childVal));
 
-        int rootVal = -1;
+            childNodes.add(childNode); // mark it as child node
 
-        // loop over all children and find the node which does occur in children
-        for(Map.Entry<Integer, Integer[]> entry: map.entrySet()){
-            int parentVal = entry.getKey();
-            if(!childrenSet.contains(parentVal)){
-                rootVal = parentVal;
-                break;
+            // figure out left or right
+            if (description[2] == 1) {
+                rootNode.left = childNode;
+            } else {
+                // right
+                rootNode.right = childNode;
             }
         }
 
-        // we now have root and map , write recursion
-        return buildTree(map, rootVal);
-    }
-
-
-    TreeNode buildTree(Map<Integer, Integer[]> map, Integer parentVal){
-        if(parentVal == null){
-            return null;
+        // for all nodes in the map find which isn't in set
+        for(TreeNode node: map.values()){
+            if(!childNodes.contains(node)){
+                return node;
+            }
         }
 
-        TreeNode root = new TreeNode(parentVal);
-        Integer[] children = map.get(parentVal);
-        root.left = buildTree(map, children == null ? null: children[0]);
-        root.right = buildTree(map, children == null ? null: children[1]);
-        return root;
+        return null;
     }
 }
