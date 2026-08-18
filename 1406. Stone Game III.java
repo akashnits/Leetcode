@@ -1,50 +1,58 @@
 class Solution {
+
+    /*
+    For every possible number of stones I can take:
+    score = what I gain right now
+
+    opponentAdvantage = how much the opponent
+                        can beat me by afterward
+
+    myAdvantage = score - opponentAdvantage
+
+    choose the move giving me the largest advantage. 
+    
+    advantantage = myScore - solve( ..., j+1, ...)
+    */
+
     public String stoneGameIII(int[] stoneValue) {
         int n = stoneValue.length;
-        long sum = 0L;
-        for(int val: stoneValue){
-            sum += val;
-        }
 
-        Integer[][] dp = new Integer[n][2];
+        Integer[] dp = new Integer[n]; // max score differnce between players
 
-        int aliceScore = calculateScore(stoneValue, n, 0, 0, dp);
-        long bobScore = sum - aliceScore;
-        if(aliceScore > bobScore){
+        int maxDiffScore = calculateMaxDiffScore(stoneValue, n, 0, dp);
+
+        if (maxDiffScore > 0) {
             return "Alice";
-        } else if(aliceScore < bobScore){
+        } else if (maxDiffScore < 0) {
             return "Bob";
-        } else{
+        } else {
             return "Tie";
         }
     }
 
-    // returns Alice's score
-    int calculateScore(int[] stoneValue, int n, int i, int turn, Integer[][] dp) {
-        if (i == n) {
+    int calculateMaxDiffScore(int[] nums, int n, int idx, Integer[] dp) {
+        // base condition:
+        if (idx >= n) {
             return 0;
         }
 
-        if(dp[i][turn] != null){
-            return dp[i][turn];
+        if (dp[idx] != null) {
+            return dp[idx];
         }
-        // Alice's turn
-        if (turn == 0) {
-            int maxScore = Integer.MIN_VALUE;
-            int score = 0;
-            for (int pile = 1; pile <= Math.min(3, n-i); pile++) {
-                score += stoneValue[i + pile - 1];
-                maxScore = Math.max(maxScore, score + calculateScore(stoneValue, n, i + pile, 1, dp));
-            }
-            return dp[i][turn] = maxScore;
-        } else { // Bob's turn
-            int minScore = Integer.MAX_VALUE;
-            int score = 0;
-            for (int pile = 1; pile <= Math.min(3, n-i); pile++) {
-                score += stoneValue[i + pile - 1];
-                minScore = Math.min(minScore, calculateScore(stoneValue, n, i + pile, 0, dp));
-            }
-            return dp[i][turn]= minScore;
+
+        // alice has three choices and she picks the one which maximizes the score
+        int maxDiffScore = Integer.MIN_VALUE;
+
+        int currScore = 0;
+        // alice takes 1/2/3 stones and recurse on it's decision to find maxScore
+        for (int j = idx; j < Math.min(idx + 3, n); j++) {
+            currScore += nums[j];
+            // score diff between alice and bob's score
+
+            maxDiffScore = Math.max(maxDiffScore, currScore - calculateMaxDiffScore(nums, n, j+1, dp));
         }
+        dp[idx] = maxDiffScore;
+
+        return dp[idx];
     }
 }
