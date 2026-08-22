@@ -1,76 +1,62 @@
 class Solution {
     public int longestStrChain(String[] words) {
-        // group words as per size
-        List<List<String>> groupList = new ArrayList<>();
-        int maxLen = 0;
-        for(String word: words){
-            maxLen = Math.max(maxLen, word.length());
-        }
+        int n = words.length;
 
-        for(int i=0; i <= maxLen; i++){
-            groupList.add(i, new ArrayList<String>());
-        }
+        int[] dp = new int[n]; // longest word chain ending at i
+        Arrays.fill(dp, 1);
 
-        for(String word: words){
-            int wordLen = word.length();
-            // get the list from wordLen and add the word to the list
-            groupList.get(wordLen).add(word);
-        }
-        // start from the last level of the list
-        int res = 0;
-        for(int len = maxLen; len > 0; len--){
-            for(String word: groupList.get(len)){
-                res = Math.max(res, 1+findLongestChain(groupList, word, new HashMap<String, Integer>()));
-            }
-        }
-        return res;
-    }
+        // sort based on length
+        Arrays.sort(words, (a, b) -> a.length() - b.length());
 
-    int findLongestChain(List<List<String>> wordList, String word1, Map<String, Integer> dp){
-        int n = word1.length();
-        // base condition
-        if( n < 1){
-            return 0;
-        }
+        int maxLen = 1;
 
-        if(dp.containsKey(word1)){
-            return dp.get(word1);
-        }
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
 
-        int maxCount =0;
-        // choices we have
-        // for each word, find the longest chain and maximize it
-        // go to one level down and check if any word is oneApart
-        for(String word2: wordList.get(n-1)){
-            if(isOneCharApart(word1, word2)){
-                maxCount = Math.max(maxCount, 1 + findLongestChain(wordList, word2, dp));
-                dp.put(word1, maxCount);
-            }
-        }
-        return maxCount;
-    }
+                // check if words[j] is predecessor of words[i]
+                if (isPredecessor(words[j], words[i])) {
 
-
-    boolean isOneCharApart(String s1, String s2){
-        if(s1.length() - s2.length() > 1){
-            return false;
-        }
-        // use two pointers
-        int i =0, j =0;
-        boolean canAdjust = true;
-        while(i < s1.length() && j < s2.length()){
-            if(s1.charAt(i) != s2.charAt(j)){
-                if(canAdjust){
-                    i++;
-                    canAdjust= false;
-                }else{
-                    return false;
+                    // extend the chain ending at j
+                    if (dp[j] + 1 > dp[i]) {
+                        dp[i] = dp[j] + 1;
+                    }
                 }
-            }else{
+            }
+
+            // update longest chain
+            if (dp[i] > maxLen) {
+                maxLen = dp[i];
+            }
+        }
+
+        return maxLen;
+    }
+
+    boolean isPredecessor(String smaller, String bigger) {
+        // bigger must have exactly one extra character
+        if (bigger.length() != smaller.length() + 1)
+            return false;
+
+        int i = 0; // smaller
+        int j = 0; // bigger
+        boolean haveBuffer = true;
+
+        while (i < smaller.length() && j < bigger.length()) {
+            if (smaller.charAt(i) == bigger.charAt(j)) {
+                // matching character -> move both
                 i++;
                 j++;
+            } else {
+                // extra character in bigger -> skip it
+                if(!haveBuffer){
+                    return false; // char mismatch but no buffer
+                }
+                j++;
+                haveBuffer = false;
             }
         }
+
+        // we should have matched every char in smaller
         return true;
     }
 }
