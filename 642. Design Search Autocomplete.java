@@ -1,4 +1,8 @@
 class AutocompleteSystem {
+//     Normal char: O(1) average — move one trie level + read first 3.
+// On #: O(L log N) — remove + reinsert sentence across L prefix nodes.
+// Build: O(T log N) where T = total characters across all sentences.
+// Space: O(T).
 
     class TrieNode {
         Map<Character, TrieNode> children = new HashMap<>();
@@ -12,6 +16,10 @@ class AutocompleteSystem {
     }
 
     TrieNode root = new TrieNode();
+
+    // keep track of current prefix node instead of starting from root every time
+    TrieNode currNode = root;
+
     Map<String, Integer> freq = new HashMap<>();
     StringBuilder sb = new StringBuilder();
 
@@ -33,6 +41,10 @@ class AutocompleteSystem {
             add(s);
 
             sb.setLength(0);
+
+            // reset current node for next input sentence
+            currNode = root;
+
             return new ArrayList<>();
         }
 
@@ -40,19 +52,16 @@ class AutocompleteSystem {
         // treat a normal char - we go ahead and search for hottest three
         sb.append(c);
 
-        TrieNode node = root;
-        
+        // just move one step ahead from current prefix node
+        if (currNode != null)
+            currNode = currNode.children.get(c);
 
-        for (char ch : sb.toString().toCharArray()) {
-            node = node.children.get(ch);
-
-            if (node == null)
-                return new ArrayList<>();
-        }
+        if (currNode == null)
+            return new ArrayList<>();
 
         List<String> res = new ArrayList<>();
 
-        for (String s : node.set) {
+        for (String s : currNode.set) {
             res.add(s);
             if (res.size() == 3) break;
         }
