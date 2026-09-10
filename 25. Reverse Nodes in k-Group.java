@@ -1,64 +1,35 @@
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
 class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
-        // base conditions:
-        if(k == 1){
-            return head;
-        }
-
-        if(head == null || head.next == null){
-            return head;
-        }
-
-        if(size(head) < k){
-            return head;
-        }
-
+        // find group of size k
         ListNode curr = head;
-        // advance by k-1 times
-        int i = k-1;
-        while(i-- > 0){
-            curr = curr.next;
-        }
-        // break list into parts: list of size k and rest of the list
-        ListNode reversedKGroupNode = reverseKGroup(curr.next, k);
-        curr.next = null;
-        ListNode reversedNode = reverseList(head, head.next);
-            
-        // combine above lists after reversal
-        head.next = reversedKGroupNode;
-        return reversedNode;
-    }
+        int count = k;
 
-    ListNode reverseList(ListNode curr, ListNode next){
-        if(next == null){
-            return curr;
+        while ( count-- > 0 ) {
+            if(curr != null)
+                curr = curr.next;
+            else
+                return head;    // mot enough nodes
         }
 
-        // break lists into two parts
-        ListNode reversedHead = reverseList(next, next.next);
+        // reverse current k group
+        ListNode reversedHead = reverse(head, curr);
 
-        // combine them
-        next.next = curr;
-        curr.next= null;
+        // join with remaiing list now 
+        head.next = reverseKGroup(curr, k); 
+
         return reversedHead;
     }
 
-    int size(ListNode head){
-        int count = 0;
-        while(head != null){
-            head = head.next;
-            count++;
-        }
-        return count;
+    ListNode reverse(ListNode startNode, ListNode endNode){
+        ListNode curr = startNode;
+        ListNode prev = null, next = null;
+
+        while(curr != null && curr != endNode){
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }   
+        return prev;
     }
 }
